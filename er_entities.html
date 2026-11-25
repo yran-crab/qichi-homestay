@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>民宿预订管理系统 - 实体分E-R图</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+    background: #eef1f6;
+    color: #2c3e50;
+    padding: 28px 20px 60px;
+  }
+  .page-head { text-align: center; margin-bottom: 26px; }
+  .page-head h1 { font-size: 26px; letter-spacing: 2px; }
+  .page-head p { color: #7f8c9b; margin-top: 8px; font-size: 13px; }
+  .legend {
+    display: flex; justify-content: center; gap: 26px; flex-wrap: wrap;
+    margin: 16px auto 0; font-size: 13px; color: #555;
+  }
+  .legend span { display: inline-flex; align-items: center; gap: 7px; }
+  .lg-ent { width: 26px; height: 16px; background: #FFE9C7; border: 2px solid #D98E2B; border-radius: 2px; }
+  .lg-attr { width: 26px; height: 16px; background: #fff; border: 1.5px solid #555; border-radius: 50%; }
+  .lg-pk { width: 26px; height: 16px; background: #FFF6D9; border: 1.5px solid #D4A017; border-radius: 50%; }
+  .lg-fk { width: 26px; height: 16px; background: #E8F1FF; border: 1.5px solid #5B8DEF; border-radius: 50%; }
+  .lg-rel { width: 20px; height: 16px; background: #E6F7E6; border: 2px solid #4CAF50; transform: rotate(45deg); }
+
+  .card {
+    background: #fff; border-radius: 12px; box-shadow: 0 3px 16px rgba(0,0,0,.07);
+    max-width: 1000px; margin: 0 auto 34px; padding: 18px 22px 10px;
+  }
+  .card h2 {
+    font-size: 18px; display: flex; align-items: center; gap: 10px;
+    border-bottom: 2px solid #f0f0f0; padding-bottom: 12px; margin-bottom: 6px;
+  }
+  .card h2 .no {
+    background: linear-gradient(135deg,#667eea,#764ba2); color: #fff;
+    width: 26px; height: 26px; border-radius: 7px; display: inline-flex;
+    align-items: center; justify-content: center; font-size: 14px;
+  }
+  .card h2 .tbl { font-size: 12px; color: #95a5a6; font-weight: normal; }
+  .card h2 button {
+    margin-left: auto; font-size: 12px; padding: 5px 14px; cursor: pointer;
+    border: 1px solid #667eea; color: #667eea; background: #fff; border-radius: 6px;
+  }
+  .card h2 button:hover { background: #667eea; color: #fff; }
+  .svg-wrap { overflow-x: auto; text-align: center; }
+  svg { display: block; margin: 0 auto; }
+</style>
+</head>
+<body>
+
+<div class="page-head">
+  <h1>民宿预订管理系统 · 实体分 E-R 图</h1>
+  <p>矩形表示实体，椭圆表示属性，带下划线为<strong>主键</strong>，蓝色为<strong>外键</strong>（依据后端 entity 真实字段绘制）</p>
+  <div class="legend">
+    <span><i class="lg-ent"></i>实体</span>
+    <span><i class="lg-attr"></i>普通属性</span>
+    <span><i class="lg-pk"></i>主键属性</span>
+    <span><i class="lg-fk"></i>外键属性</span>
+    <span><i class="lg-rel"></i>联系</span>
+  </div>
+</div>
+
+<div id="app"></div>
+
+<script>
+/* =========================================================
+ * 实体字段数据（1:1 对应后端 com.bnbms.entity 实体类）
+ * pk=true 主键  fk=true 外键（逻辑外键）
+ * ========================================================= */
+const ENTITIES = [
+  {
+    cn: '用户', table: 'sys_user（SysUser）',
+    attrs: [
+      ['id','用户编号', true],
+      ['username','用户名'], ['password','密码'], ['real_name','真实姓名'],
+      ['phone','手机号'], ['email','邮箱'], ['avatar','头像URL'],
+      ['role','角色'], ['host_status','房东审核状态'], ['status','账号状态'],
+      ['created_at','创建时间'], ['updated_at','更新时间']
+    ]
+  },
+  {
+    cn: '房源', table: 'homestay（Homestay）',
+    attrs: [
+      ['id','房源编号', true],
+      ['host_id','房东编号', false, true],
+      ['title','房源标题'], ['city','所在城市'], ['address','详细地址'],
+      ['longitude','经度'], ['latitude','纬度'], ['cover_img','封面图'],
+      ['images','图片集'], ['type','房源类型'], ['price','每晚价格'],
+      ['original_price','原价'], ['area','面积'], ['bedrooms','卧室数'],
+      ['living_rooms','客厅数'], ['bathrooms','卫生间数'], ['beds','床位数'],
+      ['max_guests','可住人数'], ['floor_info','楼层信息'], ['description','房源描述'],
+      ['rules','入住规则'], ['status','审核状态'], ['audit_remark','审核备注'],
+      ['view_count','浏览量'], ['favorite_count','收藏数'], ['order_count','订单数'],
+      ['rating','综合评分'], ['review_count','评价数'],
+      ['created_at','创建时间'], ['updated_at','更新时间']
+    ]
+  },
+  {
+    cn: '订单', table: 'booking_order（BookingOrder）',
+    attrs: [
+      ['id','订单编号', true],
+      ['order_no','订单编号号'], ['tenant_id','租客编号', false, true],
+      ['host_id','房东编号', false, true], ['homestay_id','房源编号', false, true],
+      ['coupon_id','优惠券编号', false, true],
+      ['check_in_date','入住日期'], ['check_out_date','退房日期'], ['nights','入住晚数'],
+      ['guest_count','入住人数'], ['unit_price','房间单价'], ['total_amount','订单总额'],
+      ['coupon_name','优惠券名快照'], ['discount_amount','抵扣金额'], ['pay_amount','实付金额'],
+      ['contact_name','联系人'], ['contact_phone','联系电话'], ['status','订单状态'],
+      ['pay_time','支付时间'], ['cancel_time','取消时间'], ['cancel_reason','取消原因'],
+      ['reviewed','是否已评价'], ['created_at','创建时间'], ['updated_at','更新时间']
+    ]
+  },
+  {
+    cn: '评价', table: 'review（Review）',
+    attrs: [
+      ['id','评价编号', true],
+      ['order_id','订单编号', false, true], ['homestay_id','房源编号', false, true],
+      ['tenant_id','租客编号', false, true],
+      ['rating','星级评分'], ['content','评价内容'], ['images','评价图片'],
+      ['reply','房东回复'], ['reply_at','回复时间'], ['created_at','评价时间']
+    ]
+  },
+  {
+    cn: '优惠券', table: 'coupon（Coupon）',
+    attrs: [
+      ['id','优惠券编号', true],
+      ['name','优惠券名称'], ['type','优惠券类型'], ['threshold','使用门槛'],
+      ['discount_amount','优惠金额'], ['discount_percent','折扣率'], ['max_discount_amount','封顶金额'],
+      ['total_count','发行总量'], ['received_count','已领取数'], ['used_count','已使用数'],
+      ['per_limit','每人限领'], ['valid_type','有效期类型'], ['valid_start_time','生效时间'],
+      ['valid_end_time','失效时间'], ['valid_days','有效天数'], ['status','上架状态'],
+      ['created_at','创建时间'], ['updated_at','更新时间']
+    ]
+  },
+  {
+    cn: '收藏', table: 'favorite（Favorite）',
+    attrs: [
+      ['id','收藏记录编号', true],
+      ['user_id','用户编号', false, true], ['homestay_id','房源编号', false, true],
+      ['created_at','收藏时间']
+    ]
+  }
+];
+
+/* 修正订单号中文（避免与主键重名） */
+ENTITIES[2].attrs[1][1] = '订单流水号';
+
+/* ================= 生成单个实体分 E-R 图 SVG ================= */
+const W = 880, EW = 140, EH = 38, GAP = 46, TOP = 42;
+
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function entitySvg(ent){
+  const n = ent.attrs.length;
+  const rows = Math.ceil(n / 2);
+  const H = TOP * 2 + (rows - 1) * GAP;
+  const cx = W / 2, cy = H / 2;
+  const rw = 176, rh = 62;
+  let s = '';
+
+  const lcx = cx - 210, rcx = cx + 210;   // 左右两列椭圆中心 x，关于实体对称
+
+  // 连线（先画线，椭圆/矩形覆盖在线上）
+  ent.attrs.forEach((a, i) => {
+    const left = i < rows;
+    const idx = left ? i : i - rows;
+    const y = TOP + idx * GAP;
+    const dy = rows === 1 ? 0 : (idx / (rows - 1) - 0.5) * (rh - 14);
+    if (left) {
+      s += `<line x1="${cx-rw/2}" y1="${cy+dy}" x2="${lcx+EW/2}" y2="${y}" class="ln"/>`;
+    } else {
+      s += `<line x1="${cx+rw/2}" y1="${cy+dy}" x2="${rcx-EW/2}" y2="${y}" class="ln"/>`;
+    }
+  });
+
+  // 中央实体矩形
+  s += `<rect x="${cx-rw/2}" y="${cy-rh/2}" width="${rw}" height="${rh}" rx="4" class="ent-rect"/>`;
+  s += `<text x="${cx}" y="${cy-5}" class="ent-cn">${esc(ent.cn)}</text>`;
+  s += `<text x="${cx}" y="${cy+16}" class="ent-tbl">${esc(ent.table.split('（')[1].replace('）',''))}</text>`;
+
+  // 属性椭圆
+  ent.attrs.forEach((a, i) => {
+    const [col, label, pk, fk] = [a[0], a[1], a[2], a[3]];
+    const left = i < rows;
+    const idx = left ? i : i - rows;
+    const x = (left ? lcx : rcx) - EW/2;
+    const y = TOP + idx * GAP;
+    const cls = pk ? 'pk' : (fk ? 'fk' : 'attr');
+    s += `<ellipse cx="${x+EW/2}" cy="${y}" rx="${EW/2}" ry="${EH/2}" class="${cls}"/>`;
+    s += `<text x="${x+EW/2}" y="${y-3}" class="lb ${pk?'pk-lb':''}">${esc(label)}${pk?'':''}</text>`;
+    s += `<text x="${x+EW/2}" y="${y+11}" class="col ${fk?'fk-col':''}">${esc(col)}${pk?' PK':(fk?' FK':'')}</text>`;
+  });
+
+  return `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">
+<style>
+  .ln{stroke:#8a94a6;stroke-width:1.2;}
+  .ent-rect{fill:#FFE9C7;stroke:#D98E2B;stroke-width:2.2;}
+  .ent-cn{font:bold 20px "Microsoft YaHei";fill:#8a4b00;text-anchor:middle;}
+  .ent-tbl{font:11px Consolas,monospace;fill:#b37b3c;text-anchor:middle;}
+  ellipse.attr{fill:#ffffff;stroke:#5a6472;stroke-width:1.4;}
+  ellipse.pk{fill:#FFF6D9;stroke:#D4A017;stroke-width:1.8;}
+  ellipse.fk{fill:#E8F1FF;stroke:#5B8DEF;stroke-width:1.6;}
+  .lb{font:12.5px "Microsoft YaHei";fill:#2c3e50;text-anchor:middle;}
+  .pk-lb{font-weight:bold;text-decoration:underline;}
+  .col{font:9px Consolas,monospace;fill:#97a3b0;text-anchor:middle;}
+  .fk-col{fill:#3f74d8;font-weight:bold;}
+</style>${s}</svg>`;
+}
+
+/* ================= 六实体关系总览（手写布局，陈氏符号） ================= */
+function overviewSvg(){
+  const E = [
+    ['用户', 130, 420], ['收藏', 400, 180], ['房源', 700, 120],
+    ['订单', 700, 470], ['评价', 1150, 420], ['优惠券', 1150, 720]
+  ];
+  const ent = (cn,x,y)=>`
+    <rect x="${x-75}" y="${y-28}" width="150" height="56" rx="4" class="o-ent"/>
+    <text x="${x}" y="${y+6}" class="o-ent-t">${cn}</text>`;
+  // line + 菱形 + 文字 + 基数
+  const rel = (lines, cx, cy, name, cards) => {
+    let r = lines.map(l=>`<line x1="${l[0]}" y1="${l[1]}" x2="${l[2]}" y2="${l[3]}" class="o-ln"/>`).join('');
+    r += `<polygon points="${cx},${cy-25} ${cx+60},${cy} ${cx},${cy+25} ${cx-60},${cy}" class="o-rel"/>`;
+    r += `<text x="${cx}" y="${cy+5}" class="o-rel-t">${name}</text>`;
+    (cards||[]).forEach(c=>{
+      r += `<text x="${c[0]}" y="${c[1]}" class="o-card">${c[2]}</text>`;
+    });
+    return r;
+  };
+
+  let body = '';
+  // 1 用户—发布—房源
+  body += rel([[205,398,312,280],[428,280,625,150]], 370,280,'发布',
+    [[226,378,'1'],[598,178,'N']]);
+  // 2 用户—建立—收藏
+  body += rel([[205,406,197,300],[313,300,325,225]], 255,300,'建立',
+    [[186,352,'1'],[302,255,'N']]);
+  // 3 收藏—归属—房源
+  body += rel([[475,170,492,150],[608,150,625,132]], 550,150,'属于',
+    [[482,156,'N'],[610,170,'1']]);
+  // 4 用户—下单—订单
+  body += rel([[205,432,322,445],[438,445,625,462]], 380,445,'下单',
+    [[218,424,'1'],[600,455,'N']]);
+  // 5 房源—被订—订单
+  body += rel([[700,148,700,271],[700,319,700,442]], 700,295,'被预订',
+    [[712,172,'1'],[712,420,'N']]);
+  // 6 订单—生成—评价（1:1）
+  body += rel([[775,462,867,445],[983,445,1075,432]], 925,445,'生成',
+    [[800,454,'1'],[1046,424,'1']]);
+  // 7 房源—拥有—评价
+  body += rel([[775,135,902,270],[1018,270,1075,395]], 960,270,'拥有',
+    [[800,168,'1'],[1046,368,'N']]);
+  // 8 用户—发表—评价（底部折线）
+  body += `<line x1="130" y1="448" x2="130" y2="790" class="o-ln"/>
+           <line x1="130" y1="790" x2="642" y2="790" class="o-ln"/>
+           <line x1="758" y1="790" x2="1320" y2="790" class="o-ln"/>
+           <line x1="1320" y1="790" x2="1320" y2="420" class="o-ln"/>
+           <line x1="1320" y1="420" x2="1225" y2="420" class="o-ln"/>
+           <polygon points="700,765 758,790 700,815 642,790" class="o-rel"/>
+           <text x="700" y="795" class="o-rel-t">发表</text>
+           <text x="143" y="478" class="o-card">1</text>
+           <text x="1244" y="470" class="o-card">N</text>`;
+  // 9 订单—使用—优惠券
+  body += rel([[775,498,867,600],[983,600,1075,692]], 925,600,'使用',
+    [[800,524,'N'],[1044,672,'1']]);
+  // 10 用户—领取 M:N—优惠券（顶部+右侧折线）
+  body += `<line x1="130" y1="392" x2="130" y2="50" class="o-ln"/>
+           <line x1="130" y1="50" x2="582" y2="50" class="o-ln"/>
+           <line x1="698" y1="50" x2="1290" y2="50" class="o-ln"/>
+           <line x1="1290" y1="50" x2="1290" y2="720" class="o-ln"/>
+           <line x1="1290" y1="720" x2="1225" y2="720" class="o-ln"/>
+           <polygon points="640,25 698,50 640,75 582,50" class="o-rel"/>
+           <text x="640" y="55" class="o-rel-t">领取</text>
+           <text x="148" y="74" class="o-card">M</text>
+           <text x="1244" y="700" class="o-card">N</text>`;
+
+  E.forEach(e => body += ent(e[0], e[1], e[2]));
+
+  return `<svg width="100%" viewBox="0 0 1360 840" xmlns="http://www.w3.org/2000/svg" style="max-width:1180px">
+<style>
+  .o-ln{stroke:#6b7686;stroke-width:1.5;fill:none;}
+  .o-ent{fill:#FFE9C7;stroke:#D98E2B;stroke-width:2.2;}
+  .o-ent-t{font:bold 19px "Microsoft YaHei";fill:#8a4b00;text-anchor:middle;}
+  .o-rel{fill:#E6F7E6;stroke:#4CAF50;stroke-width:2;}
+  .o-rel-t{font:14px "Microsoft YaHei";fill:#2e7d32;text-anchor:middle;}
+  .o-card{font:bold 17px "Microsoft YaHei";fill:#C0392B;text-anchor:middle;}
+</style>${body}</svg>`;
+}
+
+/* ================= 渲染页面 ================= */
+const app = document.getElementById('app');
+ENTITIES.forEach((ent, i) => {
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.innerHTML = `
+    <h2><span class="no">${i+1}</span>${ent.cn}实体 E-R 图
+      <span class="tbl">表：${ent.table.split('（')[0]} · 共 ${ent.attrs.length} 个属性</span>
+      <button>导出PNG</button>
+    </h2>
+    <div class="svg-wrap"></div>`;
+  const svgText = entitySvg(ent);
+  card.querySelector('.svg-wrap').innerHTML = svgText;
+  card.querySelector('button').onclick = () => exportPng(card.querySelector('svg'),
+    `er_${ent.table.split('（')[0]}_${ent.cn}实体.png`);
+  app.appendChild(card);
+});
+
+// 总览
+const ov = document.createElement('div');
+ov.className = 'card';
+ov.innerHTML = `
+  <h2><span class="no">★</span>六实体关系总 E-R 图
+    <span class="tbl">1:N / 1:1 / M:N 均依据各表逻辑外键（tenant_id、host_id、homestay_id、order_id、user_id、coupon_id）</span>
+    <button>导出PNG</button>
+  </h2>
+  <div class="svg-wrap">${overviewSvg()}</div>`;
+ov.querySelector('button').onclick = () => exportPng(ov.querySelector('svg'), 'er_六实体关系总览.png');
+app.appendChild(ov);
+
+/* ================= SVG 导出高清 PNG ================= */
+function exportPng(svg, filename){
+  const clone = svg.cloneNode(true);
+  const w = svg.viewBox.baseVal.width  || svg.clientWidth;
+  const h = svg.viewBox.baseVal.height || svg.clientHeight;
+  clone.setAttribute('width', w); clone.setAttribute('height', h);
+  if (!clone.getAttribute('xmlns')) clone.setAttribute('xmlns','http://www.w3.org/2000/svg');
+  const xml = new XMLSerializer().serializeToString(clone);
+  const url = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(xml);
+  const img = new Image();
+  img.onload = () => {
+    const scale = 2;
+    const c = document.createElement('canvas');
+    c.width = w * scale; c.height = h * scale;
+    const ctx = c.getContext('2d');
+    ctx.fillStyle = '#ffffff'; ctx.fillRect(0,0,c.width,c.height);
+    ctx.drawImage(img, 0, 0, c.width, c.height);
+    const a = document.createElement('a');
+    a.download = filename; a.href = c.toDataURL('image/png'); a.click();
+  };
+  img.onerror = () => alert('导出失败，请直接在浏览器中截图使用');
+  img.src = url;
+}
+</script>
+</body>
+</html>

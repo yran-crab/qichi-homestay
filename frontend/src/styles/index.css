@@ -1,0 +1,92 @@
+/* ===== 民宿管理系统全局样式 ===== */
+:root {
+  --bnb-primary: #2e9e8f;
+  --bnb-primary-light: #e6f5f3;
+  --bnb-accent: #ff7a45;
+  --bnb-text: #2b333e;
+  --bnb-text-secondary: #7a8699;
+  --bnb-border: #ebeef5;
+  --bnb-bg: #f6f8fa;
+
+  --el-color-primary: #2e9e8f;
+  --el-color-primary-light-3: #6bbfb4;
+  --el-color-primary-light-5: #97d2cb;
+  --el-color-primary-light-7: #c2e5e1;
+  --el-color-primary-light-8: #d6edeb;
+  --el-color-primary-light-9: #e6f5f3;
+  --el-color-primary-dark-2: #257f73;
+  --el-border-radius-base: 6px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue',
+    Helvetica, Arial, sans-serif;
+  color: var(--bnb-text);
+  background: var(--bnb-bg);
+  -webkit-font-smoothing: antialiased;
+}
+
+#app {
+  min-height: 100vh;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.price-text {
+  color: var(--bnb-accent);
+  font-weight: 600;
+}
+
+.page-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px 16px;
+}
+
+.card-shadow {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 12px rgba(43, 51, 62, 0.06);
+}
+
+.text-ellipsis {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.text-ellipsis-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* 滚动条美化 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-thumb {
+  background: #d4dae3;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Element 细节微调 */
+.el-button--primary {
+  --el-button-hover-bg-color: #43ada0;
+  --el-button-hover-border-color: #43ada0;
+}

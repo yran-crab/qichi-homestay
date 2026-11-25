@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>功能模块图</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #fff;
+    font-family: "SimSun", "宋体", "Microsoft YaHei", serif;
+    padding: 40px 50px;
+    width: 1900px;
+    zoom: 1.7;
+  }
+
+  /* 横条（系统 / 子系统） */
+  .bar {
+    background: linear-gradient(180deg, #eaf2ff 0%, #c3d8f7 55%, #a9c6f2 100%);
+    border: 2px solid #4a7bc4;
+    text-align: center;
+    font-size: 34px;
+    font-weight: bold;
+    color: #1a1a1a;
+    line-height: 78px;
+    height: 78px;
+  }
+  .top-bar { width: 1650px; margin: 0 auto; }
+
+  .level2 {
+    display: flex;
+    justify-content: space-between;
+    width: 1650px;
+    margin: 0 auto;
+  }
+  .sub { width: 940px; }
+  .sub2 { width: 620px; }
+
+  /* 顶部 T 型连线 */
+  .conn-1 {
+    width: 1650px;
+    margin: 0 auto;
+    height: 56px;
+    position: relative;
+  }
+  .conn-1::before { /* 竖线 */
+    content: ""; position: absolute; left: 50%; top: 0;
+    width: 2px; height: 30px; background: #2f5fa8;
+  }
+  .conn-1::after { /* 横线 */
+    content: ""; position: absolute; left: 28.5%; right: 18.8%; top: 30px;
+    height: 2px; background: #2f5fa8;
+  }
+  .drop-l, .drop-r {
+    position: absolute; top: 30px; width: 2px; height: 26px; background: #2f5fa8;
+  }
+  .drop-l { left: 28.5%; }
+  .drop-r { right: 18.8%; }
+
+  /* 底部区域：竖排方框 + 括号连线 */
+  .bottom {
+    display: flex;
+    justify-content: space-between;
+    width: 1650px;
+    margin: 0 auto;
+  }
+  .group { position: relative; padding-top: 70px; }
+  .group-left  { width: 940px; }
+  .group-right { width: 620px; }
+
+  /* 括号：竖线 + 横线 + 每个方框上方的小竖线 */
+  .bracket {
+    position: absolute; top: 0; left: 0; right: 0; height: 70px;
+  }
+  .bracket .v-main {
+    position: absolute; top: 0; left: 50%; width: 2px; height: 34px;
+    background: #2f5fa8; transform: translateX(-1px);
+  }
+  .bracket .h-line {
+    position: absolute; top: 34px; height: 2px; background: #2f5fa8;
+  }
+  .bracket .v-tick {
+    position: absolute; top: 34px; width: 2px; height: 36px; background: #2f5fa8;
+  }
+
+  .vboxes { display: flex; justify-content: space-between; }
+  .vbox {
+    writing-mode: vertical-rl;
+    text-orientation: upright;
+    background: linear-gradient(180deg, #d8f5ff 0%, #b4e8fa 50%, #8ed8f2 100%);
+    border: 2px solid #2b95bb;
+    width: 80px;
+    height: 280px;
+    font-size: 31px;
+    font-weight: bold;
+    color: #1a1a1a;
+    letter-spacing: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: 10px;
+  }
+</style>
+</head>
+<body>
+
+  <div class="bar top-bar">民宿预订管理系统</div>
+
+  <div class="conn-1">
+    <span class="drop-l"></span>
+    <span class="drop-r"></span>
+  </div>
+
+  <div class="level2">
+    <div class="bar sub">租客预订系统</div>
+    <div class="bar sub2">后台管理系统</div>
+  </div>
+
+  <div class="bottom">
+
+    <!-- 租客：10 个竖排模块 -->
+    <div class="group group-left">
+      <div class="bracket">
+        <span class="v-main"></span>
+        <span class="h-line"></span>
+      </div>
+      <div class="vboxes">
+        <div class="vbox">注册登录</div>
+        <div class="vbox">首页展示</div>
+        <div class="vbox">房源搜索</div>
+        <div class="vbox">房源详情</div>
+        <div class="vbox">预订下单</div>
+        <div class="vbox">支付宝支付</div>
+        <div class="vbox">订单管理</div>
+        <div class="vbox">评价收藏</div>
+        <div class="vbox">优惠券</div>
+        <div class="vbox">智能客服</div>
+      </div>
+    </div>
+
+    <!-- 后台（房东/管理员）：7 个竖排模块 -->
+    <div class="group group-right">
+      <div class="bracket">
+        <span class="v-main"></span>
+        <span class="h-line"></span>
+      </div>
+      <div class="vboxes">
+        <div class="vbox" style="font-size:29px;letter-spacing:10px;">用户管理</div>
+        <div class="vbox" style="font-size:29px;letter-spacing:10px;">房东审核</div>
+        <div class="vbox" style="font-size:29px;letter-spacing:10px;">房源管理</div>
+        <div class="vbox" style="font-size:29px;letter-spacing:10px;">订单管理</div>
+        <div class="vbox" style="font-size:29px;letter-spacing:10px;">评价管理</div>
+        <div class="vbox" style="font-size:29px;letter-spacing:8px;">内容运营</div>
+        <div class="vbox" style="font-size:29px;letter-spacing:10px;">数据看板</div>
+      </div>
+    </div>
+
+  </div>
+
+<script>
+  // 按竖排方框的实际中心，自动绘制括号横线和小竖线
+  document.querySelectorAll('.group').forEach(function (g) {
+    var boxes = g.querySelectorAll('.vbox');
+    var bracket = g.querySelector('.bracket');
+    var hline = g.querySelector('.h-line');
+    var centers = Array.prototype.map.call(boxes, function (b) {
+      return b.offsetLeft + b.offsetWidth / 2;
+    });
+    hline.style.left = centers[0] + 'px';
+    hline.style.right = (g.clientWidth - centers[centers.length - 1]) + 'px';
+    centers.forEach(function (c) {
+      var t = document.createElement('span');
+      t.className = 'v-tick';
+      t.style.left = (c - 1) + 'px';
+      bracket.appendChild(t);
+    });
+  });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>ER图</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:#fff; padding:24px 30px; zoom:2; font-family:"Microsoft YaHei","微软雅黑",sans-serif; }
+  h1 { text-align:center; font-size:34px; margin:6px 0 14px; color:#111; font-weight:bold; }
+  svg { display:block; }
+</style>
+</head>
+<body>
+<h1>民宿预订管理系统 E-R 图</h1>
+
+<svg width="2260" height="1320" viewBox="0 0 2260 1320" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      .ln{stroke:#333;stroke-width:2;fill:none;}
+      .aln{stroke:#333;stroke-width:2.5;fill:none;}
+      .ent{fill:#fff;stroke:#222;stroke-width:2.5;}
+      .rel{fill:#fff;stroke:#222;stroke-width:2.5;}
+      .att{fill:#fff;stroke:#333;stroke-width:2;}
+      .et{font-size:26px;font-weight:bold;fill:#111;text-anchor:middle;dominant-baseline:central;}
+      .rt{font-size:24px;fill:#111;text-anchor:middle;dominant-baseline:central;}
+      .at2{font-size:22px;fill:#111;text-anchor:middle;dominant-baseline:central;}
+      .card{font-size:30px;font-weight:bold;fill:#111;text-anchor:middle;dominant-baseline:central;}
+    </style>
+  </defs>
+
+  <!-- ===== 属性连接线（最底层） ===== -->
+  <!-- 用户属性 -->
+  <line class="ln" x1="210" y1="760" x2="75" y2="655"/>
+  <line class="ln" x1="210" y1="760" x2="30" y2="760"/>
+  <line class="ln" x1="210" y1="760" x2="75" y2="865"/>
+  <line class="ln" x1="210" y1="760" x2="200" y2="905"/>
+  <line class="ln" x1="210" y1="760" x2="340" y2="885"/>
+  <line class="ln" x1="210" y1="760" x2="330" y2="640"/>
+  <!-- 房源属性 -->
+  <line class="ln" x1="760" y1="210" x2="615" y2="100"/>
+  <line class="ln" x1="760" y1="210" x2="760" y2="80"/>
+  <line class="ln" x1="760" y1="210" x2="905" y2="100"/>
+  <line class="ln" x1="760" y1="210" x2="945" y2="215"/>
+  <line class="ln" x1="760" y1="210" x2="590" y2="215"/>
+  <line class="ln" x1="760" y1="210" x2="690" y2="330"/>
+  <!-- 订单属性 -->
+  <line class="ln" x1="1150" y1="760" x2="975" y2="875"/>
+  <line class="ln" x1="1150" y1="760" x2="1150" y2="900"/>
+  <line class="ln" x1="1150" y1="760" x2="1330" y2="880"/>
+  <line class="ln" x1="1150" y1="760" x2="970" y2="1000"/>
+  <line class="ln" x1="1150" y1="760" x2="1150" y2="1040"/>
+  <line class="ln" x1="1150" y1="760" x2="1340" y2="1010"/>
+  <!-- 优惠券属性 -->
+  <line class="ln" x1="1910" y1="210" x2="1745" y2="95"/>
+  <line class="ln" x1="1910" y1="210" x2="1900" y2="65"/>
+  <line class="ln" x1="1910" y1="210" x2="2065" y2="95"/>
+  <line class="ln" x1="1910" y1="210" x2="2160" y2="200"/>
+  <line class="ln" x1="1910" y1="210" x2="2050" y2="320"/>
+  <!-- 评价属性 -->
+  <line class="ln" x1="1840" y1="1130" x2="1660" y2="1140"/>
+  <line class="ln" x1="1840" y1="1130" x2="1720" y2="1265"/>
+  <line class="ln" x1="1840" y1="1130" x2="1900" y2="1300"/>
+  <line class="ln" x1="1840" y1="1130" x2="2070" y2="1255"/>
+  <line class="ln" x1="1840" y1="1130" x2="2120" y2="1120"/>
+
+  <!-- ===== 实体—菱形 关系线（中心到中心，形状白填充覆盖） ===== -->
+  <line class="aln" x1="210" y1="760" x2="475" y2="470"/>
+  <line class="aln" x1="475" y1="470" x2="760" y2="210"/>
+  <line class="aln" x1="210" y1="760" x2="650" y2="760"/>
+  <line class="aln" x1="650" y1="760" x2="1150" y2="760"/>
+  <line class="aln" x1="760" y1="210" x2="985" y2="475"/>
+  <line class="aln" x1="985" y1="475" x2="1150" y2="760"/>
+  <line class="aln" x1="210" y1="760" x2="1330" y2="160"/>
+  <line class="aln" x1="1330" y1="160" x2="1910" y2="210"/>
+  <line class="aln" x1="1910" y1="210" x2="1560" y2="480"/>
+  <line class="aln" x1="1560" y1="480" x2="1150" y2="760"/>
+  <line class="aln" x1="1150" y1="760" x2="1500" y2="955"/>
+  <line class="aln" x1="1500" y1="955" x2="1840" y2="1130"/>
+
+  <!-- ===== 基数 ===== -->
+  <text class="card" x="295" y="655">1</text>
+  <text class="card" x="655" y="290">n</text>
+  <text class="card" x="420" y="730">1</text>
+  <text class="card" x="905" y="728">n</text>
+  <text class="card" x="845" y="330">1</text>
+  <text class="card" x="1075" y="615">n</text>
+  <text class="card" x="300" y="712">m</text>
+  <text class="card" x="1665" y="150">n</text>
+  <text class="card" x="1770" y="330">1</text>
+  <text class="card" x="1380" y="620">n</text>
+  <text class="card" x="1275" y="855">1</text>
+  <text class="card" x="1700" y="1055">1</text>
+
+  <!-- ===== 菱形关系 ===== -->
+  <polygon class="rel" points="475,431 550,470 475,509 400,470"/>
+  <text class="rt" x="475" y="470">发布</text>
+  <polygon class="rel" points="650,721 725,760 650,799 575,760"/>
+  <text class="rt" x="650" y="760">生成</text>
+  <polygon class="rel" points="985,436 1060,475 985,514 910,475"/>
+  <text class="rt" x="985" y="475">包含</text>
+  <polygon class="rel" points="1330,121 1405,160 1330,199 1255,160"/>
+  <text class="rt" x="1330" y="160">领取</text>
+  <polygon class="rel" points="1560,441 1635,480 1560,519 1485,480"/>
+  <text class="rt" x="1560" y="480">抵扣</text>
+  <polygon class="rel" points="1500,916 1575,955 1500,994 1425,955"/>
+  <text class="rt" x="1500" y="955">产生</text>
+
+  <!-- ===== 实体矩形 ===== -->
+  <rect class="ent" x="130" y="728" width="160" height="64"/>
+  <text class="et" x="210" y="760">用户</text>
+  <rect class="ent" x="680" y="178" width="160" height="64"/>
+  <text class="et" x="760" y="210">房源</text>
+  <rect class="ent" x="1070" y="728" width="160" height="64"/>
+  <text class="et" x="1150" y="760">订单</text>
+  <rect class="ent" x="1830" y="178" width="160" height="64"/>
+  <text class="et" x="1910" y="210">优惠券</text>
+  <rect class="ent" x="1760" y="1098" width="160" height="64"/>
+  <text class="et" x="1840" y="1130">评价</text>
+
+  <!-- ===== 属性椭圆 ===== -->
+  <!-- 用户 -->
+  <ellipse class="att" cx="75" cy="655" rx="60" ry="30"/><text class="at2" x="75" y="655">用户id</text>
+  <ellipse class="att" cx="30" cy="760" rx="58" ry="30"/><text class="at2" x="30" y="760">用户名</text>
+  <ellipse class="att" cx="75" cy="865" rx="50" ry="30"/><text class="at2" x="75" y="865">密码</text>
+  <ellipse class="att" cx="200" cy="905" rx="70" ry="30"/><text class="at2" x="200" y="905">真实姓名</text>
+  <ellipse class="att" cx="340" cy="885" rx="58" ry="30"/><text class="at2" x="340" y="885">手机号</text>
+  <ellipse class="att" cx="330" cy="640" rx="50" ry="30"/><text class="at2" x="330" y="640">角色</text>
+  <!-- 房源 -->
+  <ellipse class="att" cx="615" cy="100" rx="60" ry="30"/><text class="at2" x="615" y="100">房源id</text>
+  <ellipse class="att" cx="760" cy="80" rx="50" ry="30"/><text class="at2" x="760" y="80">标题</text>
+  <ellipse class="att" cx="905" cy="100" rx="50" ry="30"/><text class="at2" x="905" y="100">城市</text>
+  <ellipse class="att" cx="945" cy="215" rx="50" ry="30"/><text class="at2" x="945" y="215">地址</text>
+  <ellipse class="att" cx="590" cy="215" rx="50" ry="30"/><text class="at2" x="590" y="215">房型</text>
+  <ellipse class="att" cx="690" cy="330" rx="50" ry="30"/><text class="at2" x="690" y="330">价格</text>
+  <!-- 订单 -->
+  <ellipse class="att" cx="975" cy="875" rx="60" ry="30"/><text class="at2" x="975" y="875">订单id</text>
+  <ellipse class="att" cx="1150" cy="900" rx="70" ry="30"/><text class="at2" x="1150" y="900">订单编号</text>
+  <ellipse class="att" cx="1330" cy="880" rx="70" ry="30"/><text class="at2" x="1330" y="880">订单状态</text>
+  <ellipse class="att" cx="970" cy="1000" rx="70" ry="30"/><text class="at2" x="970" y="1000">入住日期</text>
+  <ellipse class="att" cx="1150" cy="1040" rx="70" ry="30"/><text class="at2" x="1150" y="1040">退房日期</text>
+  <ellipse class="att" cx="1340" cy="1010" rx="70" ry="30"/><text class="at2" x="1340" y="1010">实付金额</text>
+  <!-- 优惠券 -->
+  <ellipse class="att" cx="1745" cy="95" rx="70" ry="30"/><text class="at2" x="1745" y="95">优惠券id</text>
+  <ellipse class="att" cx="1900" cy="65" rx="50" ry="30"/><text class="at2" x="1900" y="65">名称</text>
+  <ellipse class="att" cx="2065" cy="95" rx="50" ry="30"/><text class="at2" x="2065" y="95">类型</text>
+  <ellipse class="att" cx="2160" cy="200" rx="70" ry="30"/><text class="at2" x="2160" y="200">优惠金额</text>
+  <ellipse class="att" cx="2050" cy="320" rx="58" ry="30"/><text class="at2" x="2050" y="320">有效期</text>
+  <!-- 评价 -->
+  <ellipse class="att" cx="1660" cy="1140" rx="60" ry="30"/><text class="at2" x="1660" y="1140">评价id</text>
+  <ellipse class="att" cx="1720" cy="1265" rx="50" ry="30"/><text class="at2" x="1720" y="1265">评分</text>
+  <ellipse class="att" cx="1900" cy="1300" rx="50" ry="28"/><text class="at2" x="1900" y="1300">内容</text>
+  <ellipse class="att" cx="2070" cy="1255" rx="50" ry="30"/><text class="at2" x="2070" y="1255">图片</text>
+  <ellipse class="att" cx="2120" cy="1120" rx="50" ry="30"/><text class="at2" x="2120" y="1120">回复</text>
+</svg>
+
+</body>
+</html>

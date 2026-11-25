@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bnbms.mapper.BookingOrderMapper">
+
+    <sql id="voColumns">
+        o.id, o.order_no, o.tenant_id, o.host_id, o.homestay_id,
+        o.check_in_date, o.check_out_date, o.nights, o.guest_count,
+        o.unit_price, o.total_amount, o.coupon_id, o.coupon_name,
+        o.discount_amount, o.pay_amount,
+        o.contact_name, o.contact_phone,
+        o.status, o.pay_time, o.cancel_time, o.cancel_reason, o.reviewed,
+        o.created_at, o.updated_at,
+        h.title AS homestay_title, h.cover_img, h.city, h.address,
+        su.real_name AS tenant_name, hu.real_name AS host_name
+    </sql>
+
+    <sql id="voJoins">
+        FROM booking_order o
+        INNER JOIN homestay h ON h.id = o.homestay_id
+        LEFT JOIN sys_user su ON su.id = o.tenant_id
+        LEFT JOIN sys_user hu ON hu.id = o.host_id
+    </sql>
+
+    <select id="countConflict" resultType="long">
+        SELECT COUNT(1) FROM booking_order
+        WHERE homestay_id = #{homestayId}
+          AND status IN ('PENDING_PAY', 'PAID', 'CHECKED_IN')
+          AND check_in_date &lt; #{checkOut}
+          AND check_out_date &gt; #{checkIn}
+        <if test="excludeOrderId != null">
+            AND id != #{excludeOrderId}
+        </if>
+    </select>
+
+    <select id="selectTenantPage" resultType="com.bnbms.model.vo.OrderVO">
+        SELECT <include refid="voColumns"/>
+        <include refid="voJoins"/>
+        WHERE o.tenant_id = #{tenantId}
+        <if test="status != null and status != ''">AND o.status = #{status}</if>
+        ORDER BY o.created_at DESC
+    </select>
+
+    <select id="selectHostPage" resultType="com.bnbms.model.vo.OrderVO">
+        SELECT <include refid="voColumns"/>
+        <include refid="voJoins"/>
+        WHERE o.host_id = #{hostId}
+        <if test="status != null and status != ''">AND o.status = #{status}</if>
+        ORDER BY o.created_at DESC
+    </select>
+
+    <select id="selectAdminPage" resultType="com.bnbms.model.vo.OrderVO">
+        SELECT <include refid="voColumns"/>
+        <include refid="voJoins"/>
+        <where>
+            <if test="status != null and status != ''">AND o.status = #{status}</if>
+            <if test="keyword != null and keyword != ''">
+                AND (o.order_no LIKE CONCAT('%', #{keyword}, '%')
+                     OR h.title LIKE CONCAT('%', #{keyword}, '%')
+                     OR su.username LIKE CONCAT('%', #{keyword}, '%')
+                     OR su.real_name LIKE CONCAT('%', #{keyword}, '%'))
+            </if>
+        </where>
+        ORDER BY o.created_at DESC
+    </select>
+
+    <select id="selectVoById" resultType="com.bnbms.model.vo.OrderVO">
+        SELECT <include refid="voColumns"/>
+        <include refid="voJoins"/>
+        WHERE o.id = #{id}
+    </select>
+
+    <select id="selectBookedDates" resultType="com.bnbms.model.vo.BookedDateVO">
+        SELECT check_in_date AS checkInDate, check_out_date AS checkOutDate
+        FROM booking_order
+        WHERE homestay_id = #{homestayId}
+          AND status IN ('PENDING_PAY', 'PAID', 'CHECKED_IN')
+        ORDER BY check_in_date
+    </select>
+
+    <update id="batchCancelTimeout">
+        UPDATE booking_order
+        SET status = 'CANCELLED',
+            cancel_time = NOW(),
+            cancel_reason = #{reason},
+            updated_at = NOW()
+        WHERE status = 'PENDING_PAY'
+          AND created_at &lt; DATE_SUB(NOW(), INTERVAL #{minutes} MINUTE)
+    </update>
+
+</mapper>

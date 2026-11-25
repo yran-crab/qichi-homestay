@@ -1,0 +1,83 @@
+server:
+  port: 8080
+
+spring:
+  config:
+    import: optional:classpath:application-local.yml
+  application:
+    name: bnbms-backend
+  mvc:
+    format:
+      date: iso
+      date-time: iso
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/bnbms?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+    username: root
+    password: ${MYSQL_PASSWORD:123456}
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    database: 0
+    timeout: 3000ms
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 20MB
+
+mybatis-plus:
+  mapper-locations: classpath*:/mapper/**/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    db-config:
+      id-type: auto
+
+bnbms:
+  # 图片上传目录（相对 backend 工作目录）
+  upload-dir: ./uploads
+  jwt:
+    secret: ${JWT_SECRET}
+    # 登录有效期（秒）：24 小时
+    expire-seconds: 86400
+
+# 支付宝沙箱支付配置
+# 密钥获取：登录 open.alipay.com → 控制台 → 沙箱 → 接口加签方式（公钥模式）
+# 将「应用私钥」填入 app-private-key，「支付宝公钥」填入 alipay-public-key
+alipay:
+  app-id: ${ALIPAY_APP_ID:}
+  gateway: https://openapi-sandbox.dl.alipaydev.com/gateway.do
+  # 应用私钥（PKCS8 格式，去除头尾标记的纯文本）
+  app-private-key: ${ALIPAY_PRIVATE_KEY:}
+  # 支付宝公钥
+  alipay-public-key: ${ALIPAY_PUBLIC_KEY:}
+  sign-type: RSA2
+  charset: UTF-8
+  format: json
+  # 支付完成后浏览器回跳基础地址（前端地址）
+  return-url-base: http://localhost:5173
+
+# AI 智能客服配置
+# 调用优先级：通义千问 → Coze → 本地规则引擎兜底（均未配置或调用失败时客服仍可用）
+qwen:
+  # 通义千问（阿里云百炼）API Key
+  # 获取地址：https://bailian.console.aliyun.com/ → 右上角「API-KEY」管理
+  # 推荐通过环境变量 DASHSCOPE_API_KEY 注入，避免密钥明文写在配置文件中
+  api-key: ${DASHSCOPE_API_KEY:}
+  # 模型：qwen-turbo（响应快、成本低）/ qwen-plus（均衡，推荐）/ qwen-max（能力最强）
+  model: qwen-plus
+  # DashScope 的 OpenAI 兼容接口地址
+  base-url: https://dashscope.aliyuncs.com/compatible-mode/v1
+  # 生成参数
+  temperature: 0.7
+  max-tokens: 1024
+
+# Coze 工作流配置（可选，作为千问之后的第二降级方案）
+coze:
+  # Coze Personal Access Token（在 Coze 平台 → 个人中心 → 获取 Token）
+  token:
+  # Coze Bot ID（发布工作流后获取的 Bot ID）
+  bot-id:
+  # Coze API 地址（国内版默认 https://api.coze.cn）
+  api-url: https://api.coze.cn

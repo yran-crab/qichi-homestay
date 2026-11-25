@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bnbms.mapper.HomestayFacilityMapper">
+
+    <select id="selectByHomestayIds" resultType="com.bnbms.entity.HomestayFacility">
+        SELECT id, homestay_id, facility_id
+        FROM homestay_facility
+        WHERE homestay_id IN
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
+</mapper>

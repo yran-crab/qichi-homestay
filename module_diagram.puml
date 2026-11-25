@@ -1,0 +1,90 @@
+@startuml 系统功能模块图
+title 民宿预订管理系统功能模块图
+top to bottom direction
+skinparam shadowing false
+skinparam dpi 300
+skinparam defaultFontName "Microsoft YaHei"
+skinparam rectangle {
+  FontStyle bold
+}
+skinparam ArrowColor #546E7A
+
+' 顶层系统
+rectangle "民宿预订管理系统" as SYS #D97706
+
+' 角色层
+rectangle "租客端" as T #3B82F6
+rectangle "房东端" as H #10B981
+rectangle "管理员端" as A #F59E0B
+
+' 租客模块（7 个）
+rectangle "账号中心\n注册 / 登录\n资料修改 / 密码修改" as T1 #DBEAFE
+rectangle "房源浏览\n首页 / 搜索 / 详情\n热门 / 个性化推荐" as T2 #DBEAFE
+rectangle "订单管理\n金额试算 / 提交订单\n支付宝支付 / 取消订单\n我的订单 / 订单详情" as T3 #DBEAFE
+rectangle "评价收藏\n发表评价 / 我的评价\n收藏房源 / 我的收藏" as T4 #DBEAFE
+rectangle "优惠券\n领券中心 / 领取\n我的优惠券" as T5 #DBEAFE
+rectangle "公告客服\n公告浏览\nAI 智能客服" as T6 #DBEAFE
+rectangle "房东入驻\n申请成为房东" as T7 #DBEAFE
+
+' 房东模块（4 个）
+rectangle "数据看板\n房源 / 订单 / 总收入\n营收趋势 / 房源排行" as H1 #D1FAE5
+rectangle "房源管理\n发布 / 编辑 / 删除\n提交审核 / 上架 / 下架" as H2 #D1FAE5
+rectangle "订单管理\n查看房客订单\n确认入住 / 办理退房" as H3 #D1FAE5
+rectangle "评价管理\n查看评价 / 回复评价" as H4 #D1FAE5
+
+' 管理员模块（6 个）
+rectangle "数据看板\n用户 / 房源 / 订单 / 营收\n趋势图 / 城市分布" as A1 #FEF3C7
+rectangle "用户管理\n用户列表 / 筛选\n启用 / 禁用" as A2 #FEF3C7
+rectangle "审核管理\n房东入驻审核\n房源发布审核" as A3 #FEF3C7
+rectangle "房源监管\n房源列表 / 强制下架" as A4 #FEF3C7
+rectangle "运营监管\n全量订单 / 全量评价\n删除违规评价" as A5 #FEF3C7
+rectangle "内容运营\n轮播图 / 公告\n设施字典 / 优惠券" as A6 #FEF3C7
+
+' 系统 → 角色
+SYS -down-> T
+SYS -down-> H
+SYS -down-> A
+
+' 租客列：显式父子连线 + 隐藏链强制竖向堆叠
+together {
+  T -down-> T1
+  T -down-> T2
+  T -down-> T3
+  T -down-> T4
+  T -down-> T5
+  T -down-> T6
+  T -down-> T7
+  T1 -[hidden]down-> T2
+  T2 -[hidden]down-> T3
+  T3 -[hidden]down-> T4
+  T4 -[hidden]down-> T5
+  T5 -[hidden]down-> T6
+  T6 -[hidden]down-> T7
+}
+
+' 房东列
+together {
+  H -down-> H1
+  H -down-> H2
+  H -down-> H3
+  H -down-> H4
+  H1 -[hidden]down-> H2
+  H2 -[hidden]down-> H3
+  H3 -[hidden]down-> H4
+}
+
+' 管理员列
+together {
+  A -down-> A1
+  A -down-> A2
+  A -down-> A3
+  A -down-> A4
+  A -down-> A5
+  A -down-> A6
+  A1 -[hidden]down-> A2
+  A2 -[hidden]down-> A3
+  A3 -[hidden]down-> A4
+  A4 -[hidden]down-> A5
+  A5 -[hidden]down-> A6
+}
+@enduml

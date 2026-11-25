@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bnbms.mapper.HomestayMapper">
+
+    <sql id="cardColumns">
+        h.id, h.host_id, h.title, h.city, h.address, h.cover_img, h.type,
+        h.price, h.original_price, h.max_guests, h.bedrooms, h.beds,
+        h.rating, h.review_count, h.favorite_count, h.view_count, h.created_at
+    </sql>
+
+    <sql id="portalWhere">
+        h.status = 'APPROVED'
+        <if test="keyword != null and keyword != ''">
+            AND (h.title LIKE CONCAT('%', #{keyword}, '%')
+                 OR h.city LIKE CONCAT('%', #{keyword}, '%')
+                 OR h.address LIKE CONCAT('%', #{keyword}, '%')
+                 OR h.description LIKE CONCAT('%', #{keyword}, '%'))
+        </if>
+        <if test="city != null and city != ''">
+            AND h.city = #{city}
+        </if>
+        <if test="type != null and type != ''">
+            AND h.type = #{type}
+        </if>
+        <if test="minPrice != null">
+            AND h.price &gt;= #{minPrice}
+        </if>
+        <if test="maxPrice != null">
+            AND h.price &lt;= #{maxPrice}
+        </if>
+        <if test="minGuests != null">
+            AND h.max_guests &gt;= #{minGuests}
+        </if>
+        <if test="checkIn != null and checkOut != null">
+            AND NOT EXISTS (
+                SELECT 1 FROM booking_order o
+                WHERE o.homestay_id = h.id
+                  AND o.status IN ('PENDING_PAY', 'PAID', 'CHECKED_IN')
+                  AND o.check_in_date &lt; #{checkOut}
+                  AND o.check_out_date &gt; #{checkIn}
+            )
+        </if>
+    </sql>
+
+    <select id="selectPortalPage" resultType="com.bnbms.entity.Homestay">
+        SELECT <include refid="cardColumns"/>
+        FROM homestay h
+        WHERE <include refid="portalWhere"/>
+        <choose>
+            <when test="sort == 'price_asc'">ORDER BY h.price ASC</when>
+            <when test="sort == 'price_desc'">ORDER BY h.price DESC</when>
+            <when test="sort == 'hot'">ORDER BY (h.view_count + h.favorite_count * 3) DESC, h.created_at DESC</when>
+            <otherwise>ORDER BY h.created_at DESC</otherwise>
+        </choose>
+    </select>
+
+    <select id="selectHotList" resultType="com.bnbms.entity.Homestay">
+        SELECT <include refid="cardColumns"/>
+        FROM homestay h
+        WHERE h.status = 'APPROVED'
+        ORDER BY (h.view_count + h.favorite_count * 3) DESC, h.created_at DESC
+        LIMIT #{limit}
+    </select>
+
+    <!-- 智能推荐：按偏好城市/房型/价格区间查询 -->
+    <select id="selectRecommend" resultType="com.bnbms.entity.Homestay">
+        SELECT <include refid="cardColumns"/>
+        FROM homestay h
+        WHERE h.status = 'APPROVED'
+        <if test="excludeIds != null and excludeIds.size() > 0">
+            AND h.id NOT IN
+            <foreach collection="excludeIds" item="eid" open="(" separator="," close=")">#{eid}</foreach>
+        </if>
+        <if test="cities != null and cities.size() > 0">
+            AND h.city IN
+            <foreach collection="cities" item="c" open="(" separator="," close=")">#{c}</foreach>
+        </if>
+        <if test="types != null and types.size() > 0">
+            AND h.type IN
+            <foreach collection="types" item="t" open="(" separator="," close=")">#{t}</foreach>
+        </if>
+        <if test="minPrice != null">AND h.price &gt;= #{minPrice}</if>
+        <if test="maxPrice != null">AND h.price &lt;= #{maxPrice}</if>
+        ORDER BY (h.view_count + h.favorite_count * 3) DESC, h.created_at DESC
+        LIMIT #{limit}
+    </select>
+
+    <!-- 按 ID 批量查询 -->
+    <select id="selectByIds" resultType="com.bnbms.entity.Homestay">
+        SELECT * FROM homestay WHERE id IN
+        <foreach collection="ids" item="id" open="(" separator="," close=")">#{id}</foreach>
+    </select>
+
+</mapper>

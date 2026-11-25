@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bnbms.mapper.FavoriteMapper">
+
+    <select id="selectMyFavoritePage" resultType="com.bnbms.model.vo.HomestayCardVO">
+        SELECT h.id, h.host_id, h.title, h.city, h.address, h.cover_img, h.type,
+               h.price, h.original_price, h.max_guests, h.bedrooms, h.beds,
+               h.rating, h.review_count, h.favorite_count, h.status
+        FROM favorite f
+        INNER JOIN homestay h ON h.id = f.homestay_id
+        WHERE f.user_id = #{userId}
+        ORDER BY f.created_at DESC
+    </select>
+
+</mapper>

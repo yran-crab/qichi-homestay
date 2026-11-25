@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bnbms.mapper.ReviewMapper">
+
+    <sql id="voColumns">
+        r.id, r.order_id AS orderId, r.homestay_id AS homestayId, r.tenant_id AS tenantId,
+        r.rating, r.content, r.images AS imagesRaw, r.reply, r.reply_at AS replyAt,
+        r.created_at AS createdAt,
+        su.real_name AS tenantName, su.avatar AS tenantAvatar,
+        h.title AS homestayTitle, h.city AS city,
+        o.order_no AS orderNo
+    </sql>
+
+    <sql id="voJoins">
+        FROM review r
+        INNER JOIN homestay h ON h.id = r.homestay_id
+        INNER JOIN booking_order o ON o.id = r.order_id
+        LEFT JOIN sys_user su ON su.id = r.tenant_id
+    </sql>
+
+    <select id="selectHomestayPage" resultType="com.bnbms.model.vo.ReviewVO">
+        SELECT <include refid="voColumns" />
+        <include refid="voJoins" />
+        WHERE r.homestay_id = #{homestayId}
+        ORDER BY r.created_at DESC
+    </select>
+
+    <select id="selectMyPage" resultType="com.bnbms.model.vo.ReviewVO">
+        SELECT <include refid="voColumns" />
+        <include refid="voJoins" />
+        WHERE r.tenant_id = #{tenantId}
+        ORDER BY r.created_at DESC
+    </select>
+
+    <select id="selectHostPage" resultType="com.bnbms.model.vo.ReviewVO">
+        SELECT <include refid="voColumns" />
+        <include refid="voJoins" />
+        WHERE h.host_id = #{hostId}
+        <if test="query.homestayId != null">
+            AND r.homestay_id = #{query.homestayId}
+        </if>
+        <if test="query.onlyUnreplied != null and query.onlyUnreplied == true">
+            AND r.reply IS NULL
+        </if>
+        <if test="query.keyword != null and query.keyword != ''">
+            AND (h.title LIKE CONCAT('%', #{query.keyword}, '%')
+                 OR r.content LIKE CONCAT('%', #{query.keyword}, '%')
+                 OR su.real_name LIKE CONCAT('%', #{query.keyword}, '%'))
+        </if>
+        ORDER BY r.created_at DESC
+    </select>
+
+    <select id="selectAdminPage" resultType="com.bnbms.model.vo.ReviewVO">
+        SELECT <include refid="voColumns" />
+        <include refid="voJoins" />
+        <where>
+            <if test="query.homestayId != null">
+                AND r.homestay_id = #{query.homestayId}
+            </if>
+            <if test="query.keyword != null and query.keyword != ''">
+                AND (h.title LIKE CONCAT('%', #{query.keyword}, '%')
+                     OR r.content LIKE CONCAT('%', #{query.keyword}, '%')
+                     OR su.real_name LIKE CONCAT('%', #{query.keyword}, '%')
+                     OR o.order_no LIKE CONCAT('%', #{query.keyword}, '%'))
+            </if>
+        </where>
+        ORDER BY r.created_at DESC
+    </select>
+
+</mapper>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bnbms.mapper.UserCouponMapper">
+
+    <!-- 原子核销：归属本人 + 未使用 才能占用 -->
+    <update id="markUsed">
+        UPDATE user_coupon
+        SET status = 'USED',
+            order_id = #{orderId},
+            used_time = NOW()
+        WHERE id = #{id}
+          AND user_id = #{userId}
+          AND status = 'UNUSED'
+    </update>
+
+    <!-- 取消订单退券：按订单回退为未使用 -->
+    <update id="markUnused">
+        UPDATE user_coupon
+        SET status = 'UNUSED',
+            order_id = NULL,
+            used_time = NULL
+        WHERE order_id = #{orderId}
+          AND status = 'USED'
+    </update>
+
+    <!-- 我的优惠券：关联模板规则 -->
+    <select id="selectMyList" resultType="com.bnbms.model.vo.UserCouponVO">
+        SELECT
+            uc.id,
+            uc.coupon_id      AS couponId,
+            c.name,
+            c.type,
+            c.threshold,
+            c.discount_amount AS discountAmount,
+            c.discount_percent AS discountPercent,
+            c.max_discount_amount AS maxDiscountAmount,
+            uc.status,
+            uc.order_id       AS orderId,
+            uc.receive_time   AS receiveTime,
+            uc.valid_start_time AS validStartTime,
+            uc.valid_end_time   AS validEndTime,
+            uc.used_time      AS usedTime
+        FROM user_coupon uc
+        INNER JOIN coupon c ON c.id = uc.coupon_id
+        WHERE uc.user_id = #{userId}
+        ORDER BY uc.status ASC, uc.receive_time DESC
+    </select>
+
+</mapper>
